@@ -1,20 +1,11 @@
 import sys
 import random
 
-size, s, t = 5, 0, 24
+size = 5
 
 args = sys.argv
 if len(args) == 2:
     size = int(args[1])
-    t = size * size - 1
-elif len(args) == 3:
-    size = int(args[1])
-    s = args[2]
-    t = size * size - 1
-elif len(args) == 4:
-    size = int(args[1])
-    s, t = args[2], args[3]
-
 
 num_max_1 = 6
 num_max_2 = 9
@@ -32,6 +23,5 @@ for i in range(size):
         board[i][j] = num
 
 print(size)
-print(s, t)
 for i in range(size):
     print(*board[i])
