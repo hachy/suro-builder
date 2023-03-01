@@ -99,7 +99,7 @@ def solve(s, tlist, graph):
                 now = prev[now]
             res.reverse()
             cost = len(res)
-            print("cost:", cost)
+            print("cost:", cost - 1)
             print(*res)
 
             # update graph
