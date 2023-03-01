@@ -9,11 +9,20 @@ sys.setrecursionlimit(10**6)
 
 n = int(input())
 board = [list(map(int, input().split())) for _ in range(n)]
-pprint.pprint(board)
 
 row = len(board)
 col = len(board)
 N = row * col
+
+
+def show_grid_idx(r, c):
+    print("-- grid index --")
+    grid = [[0] * c for _ in range(r)]
+    for i in range(r):
+        for j in range(c):
+            grid[i][j] = i * c + j
+    pprint.pprint(grid)
+    print("--------------------")
 
 
 def create_graph(bd):
@@ -102,9 +111,15 @@ def solve(s, tlist, graph):
                 tc = res[i] % col
                 tmp_bd[tr][tc] = 0
             tmp_graph = create_graph(tmp_bd)
-        print("---------")
+        print("--------------------")
 
 
-g = create_graph(board)
+show_grid_idx(row, col)
+
 S, T = 0, [24]
+g = create_graph(board)
+pprint.pprint(board)
+print("--------------------")
+print("S:", S, "T:", T)
+print("--------------------")
 solve(S, T, g)
