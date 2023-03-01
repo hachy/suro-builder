@@ -61,7 +61,8 @@ def create_graph(bd):
     return G
 
 
-def bfs(s, graph, seen, prev):
+def bfs(s, graph, tmp_bd, seen, prev):
+    t_bd = copy.deepcopy(tmp_bd)
     deq = deque()
     seen[s] = True
     deq.append(s)
@@ -73,6 +74,12 @@ def bfs(s, graph, seen, prev):
             seen[v2] = True
             prev[v2] = v
             deq.append(v2)
+
+        # update graph
+        tmp_bd[v // row][v % col] = 0
+        graph = create_graph(tmp_bd)
+        # reset
+        tmp_bd = t_bd
     return
 
 
@@ -86,7 +93,7 @@ def solve(s, tlist, graph):
         for v in perm:
             seen = [False] * N
             prev = [-1] * N
-            bfs(start, tmp_graph, seen, prev)
+            bfs(start, tmp_graph, tmp_bd, seen, prev)
 
             if not seen[v]:
                 print("No")
