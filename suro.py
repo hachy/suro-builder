@@ -25,21 +25,34 @@ def show_grid_idx(r, c):
     print("--------------------")
 
 
-def small_board(bd, b_i, b_j, e_i, e_j, s, t):
-    s_bd = []
-    s_i, s_j, t_i, t_j = 0, 0, 0, 0
-    for i in range(row):
-        if i >= b_i and i <= e_i:
-            s_bd.append([])
-        for j in range(col):
-            if i >= b_i and i <= e_i and j >= b_j and j <= e_j:
-                s_bd[i - b_i].append(bd[i][j])
-            idx = i * col + j
-            if idx == s:
-                s_i, s_j = i - b_i, j - b_j
-            if idx == t:
-                t_i, t_j = i - b_i, j - b_j
-    return s_bd, s_i, s_j, t_i, t_j
+class SmallBoard:
+    def __init__(self, origin_bd, i, j, d, start, target):
+        self.start = start
+        self.target = target
+        b_i = 0 if i - d <= 0 else i - d
+        b_j = 0 if j - d <= 0 else j - d
+        e_i = row - 1 if i + d >= row else i + d
+        e_j = col - 1 if j + d >= col else j + d
+        self.bd, self.s_i, self.s_j, self.t_i, self.t_j = self.small_board(
+            b_i, b_j, e_i, e_j, origin_bd
+        )
+        self.h, self.w = e_i - b_i + 1, e_j - b_j + 1
+
+    def small_board(self, b_i, b_j, e_i, e_j, origin_bd):
+        s_bd = []
+        s_i, s_j, t_i, t_j = 0, 0, 0, 0
+        for i in range(row):
+            if i >= b_i and i <= e_i:
+                s_bd.append([])
+            for j in range(col):
+                if i >= b_i and i <= e_i and j >= b_j and j <= e_j:
+                    s_bd[i - b_i].append(origin_bd[i][j])
+                s_idx = i * col + j
+                if s_idx == self.start:
+                    s_i, s_j = i - b_i, j - b_j
+                if s_idx == self.target:
+                    t_i, t_j = i - b_i, j - b_j
+        return s_bd, s_i, s_j, t_i, t_j
 
 
 def dfs(s_bd, i, j, t_i, t_j, h, w, visited, depth, val):
@@ -58,10 +71,10 @@ def dfs(s_bd, i, j, t_i, t_j, h, w, visited, depth, val):
         dfs(s_bd, r, c, t_i, t_j, h, w, visited, depth + 1, val)
 
 
-def maze(s_bd, h, w, s_i, s_j, t_i, t_j, val):
-    visited = [[(False, 0)] * w for _ in range(h)]
-    dfs(s_bd, s_i, s_j, t_i, t_j, h, w, visited, 0, val)
-    goal = visited[t_i][t_j]
+def maze(s, val):
+    visited = [[(False, 0)] * s.w for _ in range(s.h)]
+    dfs(s.bd, s.s_i, s.s_j, s.t_i, s.t_j, s.h, s.w, visited, 0, val)
+    goal = visited[s.t_i][s.t_j]
     res = False
     if goal[0] and goal[1] == val:
         res = True
@@ -104,17 +117,9 @@ def create_graph(bd):
                     if d == val:
                         G[idx].append(idx2)
                     if d == val - 2:
-                        b_i = 0 if i - d <= 0 else i - d
-                        b_j = 0 if j - d <= 0 else j - d
-                        e_i = row - 1 if i + d >= row else i + d
-                        e_j = col - 1 if j + d >= col else j + d
-                        s_bd, s_i, s_j, t_i, t_j = small_board(
-                            bd, b_i, b_j, e_i, e_j, idx, idx2
-                        )
-                        h_size, w_size = e_i - b_i + 1, e_j - b_j + 1
-                        if maze(s_bd, h_size, w_size, s_i, s_j, t_i, t_j, val):
+                        sbd = SmallBoard(bd, i, j, d, idx, idx2)
+                        if maze(sbd, val):
                             G[idx].append(idx2)
-
     return G
 
 
