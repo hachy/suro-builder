@@ -116,10 +116,14 @@ def create_graph(bd):
                         continue
                     if d == val:
                         G[idx].append(idx2)
-                    if d == val - 2:
+                    smaller_val = val - 2
+                    while d == smaller_val:
+                        if smaller_val <= 0:
+                            return
                         sbd = SmallBoard(bd, i, j, d, idx, idx2)
                         if maze(sbd, val):
                             G[idx].append(idx2)
+                        smaller_val -= 2
     return G
 
 
